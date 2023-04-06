@@ -1,0 +1,31 @@
+server:
+  port: 10001
+
+spring:
+  application:
+    name: goods-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.26.131:8848
+      config:
+        server-addr: 192.168.26.131:8848
+        file-extension: yaml
+        extension-configs:
+          - data-id: goods-service.yaml
+            refresh: true
+            group: DEFAULT_GROUP
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+# MinIO 配置
+minio:
+  endpoint: http://192.168.26.131:9000    # MinIO服务地址
+  fileHost: http://192.168.26.131:9000    # 文件地址host
+  bucketName: public                      # 存储桶bucket名称
+  accessKey: minio                        # 用户名
+  secretKey: a38981225473                 # 密码
+  imgSize: 10240                           # 图片大小限制，单位：m
+  fileSize: 10240                          # 文件大小限制，单位：m

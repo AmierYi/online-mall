@@ -1,5 +1,6 @@
 package com.hxx.yi.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hxx.yi.mapper.CategoryMapper;
 import com.hxx.yi.service.CategoryService;
@@ -14,13 +15,16 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
-    @Autowired
-    private CategoryMapper categoryMapper;
+    // 构造器方法注入CategoryMapper
+    private final CategoryMapper categoryMapper;
+    public CategoryServiceImpl(CategoryMapper categoryMapper) {
+        this.categoryMapper = categoryMapper;
+    }
 
     @Override
     public ResponseResult<List<Category>> getAllCategory() {
         // 获取所有的商品分类记录
-        List<Category> categories = categoryMapper.selectList(null);
+        List<Category> categories = categoryMapper.selectList(Wrappers.<Category>lambdaQuery().eq(Category::getIsDelete,(short) 1));
         List<Category> categoryList = categories.stream()
                 .filter(
                         category -> category.getParentCategoryId() == 0)

@@ -34,7 +34,7 @@ public class GoodsProduct implements Serializable {
      * 产品的分类id
      */
     @TableField("category_id")
-    private Integer categoryId;
+    private String categoryId;
 
     /**
      * 产品规格值列表，采用JSON数组格式

@@ -13,11 +13,15 @@ import java.util.Date;
 @Data
 @TableName("test_goods")
 public class Goods implements Serializable {
+
     /**
      * 商品 id
      */
-    @TableId(value = "goods_id",type= IdType.ASSIGN_UUID)
+    @TableId(value = "goods_id", type = IdType.ASSIGN_UUID)
     private String goodsId;
+
+    @TableField(value = "shop_id")
+    private String shopId;
 
     /**
      * 商品名称
@@ -29,7 +33,7 @@ public class Goods implements Serializable {
      * 商品的分类级别 id
      */
     @TableField("category_id")
-    private Integer categoryId;
+    private String categoryId;
 
     /**
      * 商品关键字

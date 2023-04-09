@@ -16,7 +16,7 @@ public class Shop implements Serializable {
     /**
      * 店铺 id
      */
-    @TableId(value = "shop_id",type = IdType.UUID)
+    @TableId(value = "shop_id",type = IdType.ASSIGN_UUID)
     private String shopId;
 
     /**

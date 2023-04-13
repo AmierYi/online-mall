@@ -9,16 +9,16 @@ import java.util.*;
 public class AppJwtUtil {
 
     // TOKEN的有效期一天（S）
-    private static final int TOKEN_TIME_OUT = 7200;
+    private static final int TOKEN_TIME_OUT = 60 * 60 * 24;
     // 加密KEY
     private static final String TOKEN_ENCRY_KEY = "MDk4ZjZiY2Q0NjIxZDM3M2NhZGU0ZTgzMjYyN2I0ZjY";
     // 最小刷新间隔(S)
     private static final int REFRESH_TIME = 300;
 
     // 生产ID
-    public static String getToken(String id){
+    public static String getToken(String id) {
         Map<String, Object> claimMaps = new HashMap<>();
-        claimMaps.put("id",id);
+        claimMaps.put("id", id);
         long currentTime = System.currentTimeMillis();
         return Jwts.builder()
                 .setId(UUID.randomUUID().toString())
@@ -40,9 +40,9 @@ public class AppJwtUtil {
      * @return
      */
     private static Jws<Claims> getJws(String token) {
-            return Jwts.parser()
-                    .setSigningKey(generalKey())
-                    .parseClaimsJws(token);
+        return Jwts.parser()
+                .setSigningKey(generalKey())
+                .parseClaimsJws(token);
     }
 
     /**
@@ -54,7 +54,7 @@ public class AppJwtUtil {
     public static Claims getClaimsBody(String token) {
         try {
             return getJws(token).getBody();
-        }catch (ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             return null;
         }
     }
@@ -76,21 +76,21 @@ public class AppJwtUtil {
      * @return -1：有效，0：有效，1：过期，2：过期
      */
     public static int verifyToken(Claims claims) {
-        if(claims==null){
+        if (claims == null) {
             return 1;
         }
         try {
             claims.getExpiration()
                     .before(new Date());
             // 需要自动刷新TOKEN
-            if((claims.getExpiration().getTime()-System.currentTimeMillis())>REFRESH_TIME*1000){
+            if ((claims.getExpiration().getTime() - System.currentTimeMillis()) > REFRESH_TIME * 1000) {
                 return -1;
-            }else {
+            } else {
                 return 0;
             }
         } catch (ExpiredJwtException ex) {
             return 1;
-        }catch (Exception e){
+        } catch (Exception e) {
             return 2;
         }
     }
@@ -106,15 +106,5 @@ public class AppJwtUtil {
         return key;
     }
 
-    public static void main(String[] args) {
-       /* Map map = new HashMap();
-        map.put("id","11");*/
-        String token = AppJwtUtil.getToken("114514");
-        System.out.println(token);
-        Jws<Claims> jws = AppJwtUtil.getJws(token);
-        Claims claims = jws.getBody();
-        System.out.println(claims.get("id"));
-
-    }
 
 }

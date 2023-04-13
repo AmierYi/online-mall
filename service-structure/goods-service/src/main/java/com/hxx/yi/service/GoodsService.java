@@ -24,6 +24,15 @@ public interface GoodsService extends IService<Goods> {
     ResponseResult<Object> listAllGoods(Integer pageNumber, Integer pageSize, String shopIdStr, String storekeeperId);
 
     /**
+     * 获取旗下所有商品（不包含属性、规格和 sku）
+     *
+     * @param shopIdStr     店铺 id数组的拼接字符串
+     * @param storekeeperId 店家 id
+     * @return ResponseResult
+     */
+    ResponseResult<Object> getGoods(String shopIdStr, String storekeeperId);
+
+    /**
      * 新增商品的方法
      *
      * @param goodsDto 商品的 dto对象
@@ -53,5 +62,5 @@ public interface GoodsService extends IService<Goods> {
      * @param map 商品 id的键值对
      * @return ResponseResult<Object>
      */
-    ResponseResult<Object> logicRemoveGoodsByGoodsID(Map<String,String> map);
+    ResponseResult<Object> logicRemoveGoodsByGoodsID(Map<String, String> map);
 }

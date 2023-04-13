@@ -59,6 +59,19 @@ public class GoodsController {
         return ResponseResult.success(goodsVoPage);
     }
 
+    /**
+     * /**
+     * 获取旗下所有商品（不包含属性、规格和 sku）
+     *
+     * @param shopIdStr     店铺 id数组的拼接字符串
+     * @param storekeeperId 店家 id
+     * @return ResponseResult
+     */
+    @GetMapping("/get")
+    public ResponseResult<Object> getGoods(@RequestParam("shopIdStr") String shopIdStr,@RequestParam("storekeeperId") String storekeeperId) {
+        return this.goodsService.getGoods(shopIdStr, storekeeperId);
+    }
+
 
     /**
      * 处理新增商品的请求
@@ -101,14 +114,15 @@ public class GoodsController {
 
     /**
      * 逻辑删除商品的请求
+     *
      * @param map 封装的 map
      * @return ResponseResult<Object>
      */
     @PutMapping("/remove")
-    public ResponseResult<Object> logicRemoveGoods(@RequestBody Map<String,String> map) {
+    public ResponseResult<Object> logicRemoveGoods(@RequestBody Map<String, String> map) {
         ResponseResult<Object> responseResult = goodsService.logicRemoveGoodsByGoodsID(map);
 
-        if(responseResult.getCode() != 200) {
+        if (responseResult.getCode() != 200) {
             return responseResult;
         }
         goodsAttributeService.logicRemoveAttributeById(map);

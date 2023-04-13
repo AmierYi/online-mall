@@ -15,7 +15,7 @@ public class Storekeeper implements Serializable {
     /**
      * 店主 id
      */
-    @TableId(value = "storekeeper_id", type = IdType.ASSIGN_ID)
+    @TableId(value = "storekeeper_id", type = IdType.ASSIGN_UUID)
     private String storekeeperId;
 
     /**

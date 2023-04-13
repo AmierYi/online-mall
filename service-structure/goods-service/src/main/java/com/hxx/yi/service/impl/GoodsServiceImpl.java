@@ -120,7 +120,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         List<Goods> goodsList = goodsMapper.selectList(
                 Wrappers.<Goods>lambdaQuery()
                         .in(Goods::getShopId, ids)
-                        .eq(Goods::getIsDelete,(short) 1));
+                        .eq(Goods::getIsDelete, (short) 1));
         // 结果小于等于0，返回错误信息
         if (goodsList.size() == 0) {
             return ResponseResult.build(200, "暂无数据");
@@ -135,22 +135,48 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
         goodsVoPage.setRecords(goodsVoList);
         goodsVoPage.setTotal(goodsVoList.size());
-        goodsVoPage.setPages(goodsVoList.size() % pageSize + 1);
+
+        if (goodsVoList.size() < pageSize) {
+            goodsVoPage.setPages(1);
+        } else {
+            goodsVoPage.setPages(goodsVoList.size() % pageSize + 1);
+        }
+
         return ResponseResult.success(goodsVoPage);
     }
 
     @Override
+    public ResponseResult<Object> getGoods(String shopIdStr, String storekeeperId) {
+        // 参数校验
+        if (StrUtil.isBlank(shopIdStr) || StrUtil.isBlank(storekeeperId)) {
+            return ResponseResult.error(ResponseEnum.ERROR_PARAM);
+        }
+        // 客户端登录的id和服务器保存的id不一致，违规操作。直接返回
+        if (!storekeeperId.equals(StorekeeperThreadLocal.get().getStorekeeperId())) {
+            return ResponseResult.error(ResponseEnum.OPERATION_FORBIDDEN);
+        }
+
+        String[] ids = shopIdStr.split(",");
+
+        List<Goods> goods = goodsMapper.selectList(
+                Wrappers.<Goods>lambdaQuery()
+                        .in(Goods::getShopId, ids)
+                        .eq(Goods::getIsDelete, (short) 1));
+        return ResponseResult.success(goods);
+    }
+
+    @Override
     public ResponseResult<Object> updateGoods(GoodsDto goodsDto) {
-        if(goodsDto == null) {
+        if (goodsDto == null) {
             return ResponseResult.error(ResponseEnum.ERROR_PARAM);
         }
 
         Goods goods = new Goods();
-        BeanUtils.copyProperties(goodsDto,goods);
+        BeanUtils.copyProperties(goodsDto, goods);
         goods.setUpdateTime(new DateTime());
         int i = goodsMapper.updateById(goods);
 
-        if(i <= 0) {
+        if (i <= 0) {
             return ResponseResult.error("0条数据受到影响");
         }
 
@@ -158,16 +184,16 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public ResponseResult<Object> logicRemoveGoodsByGoodsID(Map<String,String> map) {
+    public ResponseResult<Object> logicRemoveGoodsByGoodsID(Map<String, String> map) {
         String goodsId = map.get("goodsId");
-        if(StrUtil.isBlank(goodsId)) {
+        if (StrUtil.isBlank(goodsId)) {
             return ResponseResult.error(ResponseEnum.ERROR_PARAM);
         }
 
         UpdateWrapper<Goods> goodsUpdateWrapper = new UpdateWrapper<>();
         UpdateWrapper<Goods> wrapper = goodsUpdateWrapper.set("is_delete", (short) 0).eq("goods_id", goodsId);
         int i = goodsMapper.update(null, wrapper);
-        if(i <= 0) {
+        if (i <= 0) {
             return ResponseResult.error("逻辑删除失败");
         }
         return ResponseResult.success();

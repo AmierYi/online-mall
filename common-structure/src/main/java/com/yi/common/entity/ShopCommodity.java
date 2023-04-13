@@ -15,7 +15,7 @@ public class ShopCommodity {
     /**
      * 店铺商品id
      */
-    @TableId(value = "shop_commodity_id",type = IdType.ASSIGN_ID)
+    @TableId(value = "shop_commodity_id",type = IdType.ASSIGN_UUID)
     private String shopCommodityId;
 
     /**
